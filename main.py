@@ -4,6 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
+import matplotlib
+matplotlib.use('TkAgg')  # or 'Qt5Agg' depending on your system
+
 # Simulation parameters
 sampling_rate = 100  # Hz
 dt = 1 / sampling_rate
