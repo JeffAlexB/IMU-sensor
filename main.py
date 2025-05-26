@@ -21,7 +21,7 @@ true_roll = 10 * np.sin(2 * np.pi * 0.1 * t)
 disturbance = 5 * np.sin(2 * np.pi * 1.5 * t)
 true_pitch += disturbance * np.exp(-0.5 * t)  # decay over time
 
-# Simulated gyro data (rate of change + noise)
+# Simulated gyro data (rate of change + noise)import matplotlib
 gyro_pitch_rate = np.gradient(true_pitch, dt) + np.random.normal(0, 0.5, size=t.shape)
 gyro_roll_rate = np.gradient(true_roll, dt) + np.random.normal(0, 0.5, size=t.shape)
 
