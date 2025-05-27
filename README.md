@@ -80,7 +80,7 @@ A GUI window will open with 3 plots and a slider at the bottom.
 <p> This project confirmed my interest in embedded systems and aerospace applications. 
 Even with limited time, simulating sensor behavior and writing the fusion logic helped 
 me understand what it really means to write software that interprets noisy physical data. 
-I hope to build on this in future projects and my career.</p>
+I hope to build on this in future projects.</p>
 
 ---
 
