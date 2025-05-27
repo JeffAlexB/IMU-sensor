@@ -124,7 +124,8 @@ for ax in [ax1, ax2, ax3]:
 # launch plot / visual
 plt.show()
 
-# Engineer’s Note:
+# Final Note:
 # This started as a way to better understand how real-world INS and AHRS systems use fused sensor data
 # to produce stable, low-drift orientation. Adding disturbances and multiple axes helped me appreciate
-# the filter’s simplicity and limitations. I'd like to eventually compare this to Madgwick or Kalman filtering.
+# the filter’s simplicity and limitations. I'd like to eventually compare this to Madgwick or Kalman filtering
+# Or implement accelerometer or magnetometer for complete 9-axis IMU for absolute positioning.
