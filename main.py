@@ -18,6 +18,10 @@ import matplotlib
 matplotlib.use('TkAgg')  # or 'Qt5Agg' depending on your system
 
 # simulation parameters
+#I set up a 100 Hz sampling rate, typical for many embedded IMU systems.
+# The simulation runs for 10 seconds, which should be long enough to
+# visualize drift, response, and filter behavior. I wanted the timing to
+# reflect what a real microcontroller might handle in a feedback loop.
 sampling_rate_hz = 100  # Hz
 dt = 1 / sampling_rate_hz
 sim_time_seconds = 10
@@ -27,6 +31,11 @@ t = np.arange(0, sim_time_seconds, dt)
 
 # 'true' motion profiles used for the sim
 # Sims the sinusoidal pitch, roll, yaw motion - in degrees
+#Here I generate smooth sinusoidal motion for pitch, roll, and yaw. It
+# mimics how a drone or underwater robot might move in 3D. To make things
+# more realistic, I added a decaying disturbance to the pitch, kind of
+# like sudden turbulence or mechanical shock. That makes the filter’s job
+# harder, which was the point.
 true_pitch = 20 * np.sin(2 * np.pi * 0.2 * t)
 true_roll  = 10 * np.sin(2 * np.pi * 0.1 * t)
 true_yaw   = 30 * np.sin(2 * np.pi * 0.15 * t)
@@ -58,6 +67,14 @@ fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10))
 plt.subplots_adjust(left=0.1, bottom=0.25)
 
 # siming pitch
+# I then simulate noisy sensor readings, since gyro rates are derived from the
+# true signal’s derivative plus small noise to emulate drift. Accelerometer
+# and magnetometer estimates get heavier noise, because in practice they’re
+# less stable but they provide absolute reference.
+
+# I encapsulated the noise model in a small helper function to simulate sensor
+# readings, I tried to not go overboard with abstraction, just enough to keep
+# the code clean.
 l_true_pitch, = ax1.plot(t, true_pitch, label='True Pitch', linewidth=2)
 l_accel_pitch, = ax1.plot(t, accel_pitch, label='Accel Pitch (Noisy)', alpha=0.5)
 l_fused_pitch, = ax1.plot([], [], label='Fused Pitch', linestyle='--')
@@ -86,6 +103,15 @@ ax3.legend()
 ax3.grid(True)
 
 # Complementary Filter Logic
+# The core of this project is the complementary filter, which is a simple,
+# real-time method used in many embedded systems when Kalman filtering is
+# overkill. It blends gyro integration with a noisy absolute reference like
+# an accelerometer or magnetometer. The thought was: the gyro reacts fast
+# but drifts, the reference is noisy but stable - this filter balances them.
+# The alpha parameter controls that balance. Higher alpha trusts the gyro more.
+
+# How even simple filters can dramatically clean up sensor data — it made the
+# theory feel real.
 def apply_complementary_filter(gyro_data, reference_data, alpha):
     fused = np.zeros_like(t)
     fused[0] = reference_data[0]  # start with absolute reference
@@ -95,6 +121,13 @@ def apply_complementary_filter(gyro_data, reference_data, alpha):
     return fused
 
 # slider Setup & basic logic
+# I added an interactive slider to tune alpha and visualize how the filter
+# behaves in real time. This helped me understand how over-trusting either
+# source impacts stability and responsiveness. I hand-tuned a default alpha
+# around 0.97,  that gave the cleanest response for this simulation. You can
+# drag the slider and immediately see how the fused signal changes, making it
+# useful to intuitively grasp filter tuning, which is often done empirically
+# in the field.
 def update(val):
     alpha_val = slider_alpha.val
     fused_pitch = apply_complementary_filter(gyro_pitch_rate, accel_pitch, alpha_val)
@@ -122,6 +155,11 @@ for ax in [ax1, ax2, ax3]:
     ax.autoscale_view()
 
 # launch plot / visual
+# The output shows the true angle, the noisy sensor estimate, and the fused result
+# for each axis: pitch, roll, and yaw. I separated the plots so it’s easier
+# to compare their behavior individually. You can see how the fused signal
+# tracks the true angle much more closely than either raw input. It’s especially
+# visible in the pitch where I injected disturbances.
 plt.show()
 
 # Final Note:
@@ -129,3 +167,7 @@ plt.show()
 # to produce stable, low-drift orientation. Adding disturbances and multiple axes helped me appreciate
 # the filter’s simplicity and limitations. I'd like to eventually compare this to Madgwick or Kalman filtering
 # Or implement accelerometer or magnetometer for complete 9-axis IMU for absolute positioning.
+
+# In practical terms: The gyro calculates how fast an object is turning.
+# The accelerometer calculates where gravity is (tilt).
+# The magnetometer calculates which way is north (heading).
