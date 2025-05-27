@@ -1,4 +1,4 @@
-# IMU Sensor Fusion: Complementary Filter Simulation (Pitch and Roll)
+# IMU Sensor Fusion: Complementary Filter Simulation (Pitch, Roll, Yaw)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,24 +13,27 @@ dt = 1 / sampling_rate
 sim_time = 10  # seconds
 t = np.arange(0, sim_time, dt)
 
-# Simulate true pitch and roll angles (oscillating + disturbance)
+# Simulate true angles (oscillating + disturbance)
 true_pitch = 20 * np.sin(2 * np.pi * 0.2 * t)
 true_roll = 10 * np.sin(2 * np.pi * 0.1 * t)
+true_yaw = 30 * np.sin(2 * np.pi * 0.15 * t)
 
-# Add disturbances (e.g. wave or gusts)
+# Add disturbances to pitch
 disturbance = 5 * np.sin(2 * np.pi * 1.5 * t)
 true_pitch += disturbance * np.exp(-0.5 * t)  # decay over time
 
-# Simulated gyro data (rate of change + noise)import matplotlib
+# Simulated gyro data (rate of change + noise)
 gyro_pitch_rate = np.gradient(true_pitch, dt) + np.random.normal(0, 0.5, size=t.shape)
 gyro_roll_rate = np.gradient(true_roll, dt) + np.random.normal(0, 0.5, size=t.shape)
+gyro_yaw_rate = np.gradient(true_yaw, dt) + np.random.normal(0, 0.5, size=t.shape)
 
-# Simulated accelerometer angle (tilt) + noise
+# Simulated accelerometer and magnetometer angles (tilt + noise)
 accel_pitch = true_pitch + np.random.normal(0, 2.0, size=t.shape)
 accel_roll = true_roll + np.random.normal(0, 2.0, size=t.shape)
+mag_yaw = true_yaw + np.random.normal(0, 2.0, size=t.shape)
 
 # Interactive plot setup
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10))
 plt.subplots_adjust(left=0.1, bottom=0.25)
 
 # Pitch plot
@@ -46,11 +49,20 @@ ax1.grid(True)
 l_true_roll, = ax2.plot(t, true_roll, label='True Roll', linewidth=2)
 l_accel_roll, = ax2.plot(t, accel_roll, label='Accel Roll (Noisy)', alpha=0.5)
 l_fused_roll, = ax2.plot([], [], label='Fused Roll', linestyle='--')
-ax2.set_xlabel('Time (s)')
 ax2.set_ylabel('Roll (degrees)')
 ax2.set_title('Roll Axis')
 ax2.legend()
 ax2.grid(True)
+
+# Yaw plot
+l_true_yaw, = ax3.plot(t, true_yaw, label='True Yaw', linewidth=2)
+l_mag_yaw, = ax3.plot(t, mag_yaw, label='Mag Yaw (Noisy)', alpha=0.5)
+l_fused_yaw, = ax3.plot([], [], label='Fused Yaw', linestyle='--')
+ax3.set_xlabel('Time (s)')
+ax3.set_ylabel('Yaw (degrees)')
+ax3.set_title('Yaw Axis')
+ax3.legend()
+ax3.grid(True)
 
 # Slider for alpha
 ax_alpha = plt.axes([0.25, 0.1, 0.65, 0.03])
@@ -70,12 +82,16 @@ def update(val):
     alpha_val = slider_alpha.val
     fused_pitch = compute_fused(gyro_pitch_rate, accel_pitch, alpha_val)
     fused_roll = compute_fused(gyro_roll_rate, accel_roll, alpha_val)
+    fused_yaw = compute_fused(gyro_yaw_rate, mag_yaw, alpha_val)
     l_fused_pitch.set_data(t, fused_pitch)
     l_fused_roll.set_data(t, fused_roll)
+    l_fused_yaw.set_data(t, fused_yaw)
     ax1.relim()
     ax1.autoscale_view()
     ax2.relim()
     ax2.autoscale_view()
+    ax3.relim()
+    ax3.autoscale_view()
     fig.canvas.draw_idle()
 
 slider_alpha.on_changed(update)
@@ -83,9 +99,12 @@ slider_alpha.on_changed(update)
 # Initial plot
 l_fused_pitch.set_data(t, compute_fused(gyro_pitch_rate, accel_pitch, slider_alpha.val))
 l_fused_roll.set_data(t, compute_fused(gyro_roll_rate, accel_roll, slider_alpha.val))
+l_fused_yaw.set_data(t, compute_fused(gyro_yaw_rate, mag_yaw, slider_alpha.val))
 ax1.relim()
 ax1.autoscale_view()
 ax2.relim()
 ax2.autoscale_view()
+ax3.relim()
+ax3.autoscale_view()
 
 plt.show()
