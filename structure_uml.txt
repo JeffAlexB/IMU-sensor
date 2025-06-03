@@ -1,0 +1,61 @@
+imu_fusion_simulator/                 ← root folder (your repo/project)
+├── main.py                           ← Entry point (orchestrates everything)
+├── config.py                         ← Global constants and simulation settings
+├── sensors/                          ← Simulated sensors
+│   ├── __init__.py
+│   ├── base_sensor.py                ← Abstract sensor interface (SRP, ISP)
+│   ├── gyro_sensor.py                ← Simulated gyroscope (inherits BaseSensor)
+│   ├── accel_sensor.py               ← Simulated accelerometer
+│   └── mag_sensor.py                 ← Simulated magnetometer
+├── motion/                           ← True signal generation
+│   ├── __init__.py
+│   └── motion_profile.py             ← Defines motion (pitch/roll/yaw + disturbances)
+├── fusion/                           ← Sensor fusion logic
+│   ├── __init__.py
+│   └── complementary_filter.py       ← ComplementaryFilter class (SRP, OCP)
+├── visualizer/                       ← Graphs, GUI, sliders
+│   ├── __init__.py
+│   └── plot_manager.py               ← Class to handle plots and slider callbacks
+├── utils/                            ← Shared utilities
+│   ├── __init__.py
+│   └── noise.py                      ← Noise generators and helpers
+├── requirements.txt                  ← For pip installs
+├── README.md
+└── LICENSE
+
+
++-------------------+        +-----------------------+
+| MotionProfile     |        | NoiseGenerator        |
+|-------------------|        |-----------------------|
+| +get_true_motion()|        | +add_noise()          |
++-------------------+        +-----------------------+
+
+        |                                |
+        v                                v
+
++-------------------+        +-----------------------+
+| GyroSensor        |<-------| BaseSensor (abstract) |
+|-------------------|        +-----------------------+
+| +generate_data()  |
++-------------------+
+
+(similar classes: AccelSensor, MagSensor)
+
++--------------------------+
+| ComplementaryFilter      |
+|--------------------------|
+| +apply()                 |
++--------------------------+
+
++--------------------------+
+| PlotManager              |
+|--------------------------|
+| +init_plot()             |
+| +update_plot()           |
++--------------------------+
+
++--------------------------+
+| SimulationManager        | ← main.py logic controller
+|--------------------------|
+| +run_simulation()        |
++--------------------------+
