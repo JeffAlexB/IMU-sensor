@@ -1,8 +1,6 @@
-# motion_profile.py
-
 """
-Generates the true pitch, roll, and yaw motion profiles for the IMU simulation.
-Also includes a decaying disturbance for pitch to simulate turbulence.
+Generating the pitch, roll, and yaw motion profiles for the IMU simulation.
+Also includes a decaying disturbance for pitch aka turbulence.
 """
 
 import numpy as np
@@ -16,19 +14,20 @@ from config import (
 
 class MotionProfile:
     def __init__(self):
-        self.time_array = np.arange(0, SIM_TIME_SECONDS, DT)
+        # Create a time array from 0 to SIM_TIME_SECONDS, spaced by DT
+        self.t = np.arange(0, SIM_TIME_SECONDS, DT)
 
     def generate(self):
-        t = self.time_array
+        # Create the base sinusoidal motion for each axis
+        pitch = PITCH_AMPLITUDE_DEG * np.sin(2 * np.pi * PITCH_FREQ_HZ * self.t)
+        roll  = ROLL_AMPLITUDE_DEG  * np.sin(2 * np.pi * ROLL_FREQ_HZ  * self.t)
+        yaw   = YAW_AMPLITUDE_DEG   * np.sin(2 * np.pi * YAW_FREQ_HZ   * self.t)
 
-        pitch = PITCH_AMPLITUDE_DEG * np.sin(2 * np.pi * PITCH_FREQ_HZ * t)
-        roll  = ROLL_AMPLITUDE_DEG  * np.sin(2 * np.pi * ROLL_FREQ_HZ  * t)
-        yaw   = YAW_AMPLITUDE_DEG   * np.sin(2 * np.pi * YAW_FREQ_HZ   * t)
-
-        disturbance = DISTURBANCE_AMPLITUDE * np.sin(2 * np.pi * DISTURBANCE_FREQ_HZ * t)
-        pitch += disturbance * np.exp(-DISTURBANCE_DECAY * t)
+        # Add turbulence to pitch (decaying sinusoid)
+        disturbance = DISTURBANCE_AMPLITUDE * np.sin(2 * np.pi * DISTURBANCE_FREQ_HZ * self.t)
+        pitch += disturbance * np.exp(-DISTURBANCE_DECAY * self.t)
 
         return pitch, roll, yaw
 
     def get_time(self):
-        return self.time_array
+        return self.t
