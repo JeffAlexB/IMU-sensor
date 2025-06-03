@@ -1,5 +1,3 @@
-# config.py
-
 """
 Configuration constants and tunable parameters for the IMU Fusion Simulator.
 This file isolates settings so that tuning or adapting the simulation can be
