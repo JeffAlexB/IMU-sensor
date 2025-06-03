@@ -55,7 +55,7 @@ A GUI window will open with 3 plots and a slider at the bottom.
 
 ---
 
-## Talking Points
+## Key Points
 - Demonstrates real-time sensor fusion principles
 - Filter mimics what’s deployed on embedded MCUs or sensor hubs
 - Visualizes tradeoffs in tuning `alpha` (gyro weight)
@@ -68,10 +68,10 @@ A GUI window will open with 3 plots and a slider at the bottom.
 - Complementary filter only — no Kalman or Madgwick comparison
 - All motion is simulated — no hardware integration yet
 
-### Possible Improvements
+### Potential Improvements
 - Extend to 9-axis simulation (full IMU + magnetometer + barometer / accelerometer)
 - Switch to quaternion math for full 3D orientation(?)
-- Add real IMU data (e.g., MPU6050 + Arduino) or use a board
+- Add real IMU data (e.g., MPU6050 + Arduino) or use a board for data
 - Implement real-time constraints (e.g., bounded latency + update loop)
 
 ---
@@ -85,4 +85,4 @@ I hope to build on this in future projects.</p>
 ---
 
 ## License
-MIT License(?)
+MIT License(?), not sure if this is needed or not.
