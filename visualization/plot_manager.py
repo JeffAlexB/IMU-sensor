@@ -2,11 +2,8 @@
 Handles all plotting and visualization for the IMU sensor fusion simulator.
 
 - Generates 3 time-series plots for pitch, roll, and yaw
-- Displays true angles, noisy reference inputs (accel/mag), and fused output
+- Displays true angles, noisy reference inputs (accel or mag), and fused output
 - Adds an interactive slider to tune the alpha parameter in the complementary filter
-- Updates the fused estimates live when the slider is moved
-
-This helped me see how much trust to place in gyros vs. absolute sensors.
 """
 
 import numpy as np
@@ -18,15 +15,16 @@ class PlotManager:
     def __init__(self, time_array, raw_data, dt, initial_alpha=0.97):
         """
         Parameters:
-        - time_array: np.ndarray, x-axis for the plots (time in seconds)
-        - raw_data: dict with sensor data and ground truth:
+        - time_array: np.ndarray, x-axis for the plots in seconds
+        - raw_data: dictionary with sensor data
+            example for synth data:
             {
                 "gyro":      {"pitch": ..., "roll": ..., "yaw": ...},
                 "reference": {"pitch": ..., "roll": ..., "yaw": ...},
                 "true":      {"pitch": ..., "roll": ..., "yaw": ...}
             }
-        - dt: float, time step in seconds
-        - initial_alpha: float, starting weight for the complementary filter
+        - dt: time step in seconds
+        - initial_alpha: starting weight for the complementary filter
         """
         self.t = time_array
         self.raw = raw_data
