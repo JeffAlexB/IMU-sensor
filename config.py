@@ -22,7 +22,7 @@ DISTURBANCE_AMPLITUDE = 5        # how strong the pitch disturbance is
 DISTURBANCE_FREQ_HZ = 1.5        # frequency of the disturbance
 DISTURBANCE_DECAY = 0.5          # exponential decay rate (lower = faster fade)
 
-# sensor 'noise' to sim sensor inputs
+# sensor 'noise' for sim sensor inputs
 GYRO_NOISE_STDDEV = 0.5          # gyro noise (deg/s)
 ACCEL_NOISE_STDDEV = 2.0         # accel noise (deg)
 MAG_NOISE_STDDEV = 2.0           # mag noise (deg)
