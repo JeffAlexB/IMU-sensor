@@ -6,5 +6,13 @@ noise model and interface for integration into the fusion pipeline.
 
 from .base_sensor import BaseSensor
 from .gyro_sensor import GyroSensor
+from .accelerometer_sensor import AccelerometerSensor
+from .magnetometer_sensor import MagnetometerSensor
 
-# TODO: Add more imports as other sensors (such as: Accelerometer_Sensor, Magnetometer_Sensor) as they are implemented.
+__all__ = [
+    "BaseSensor",
+    "GyroSensor",
+    "AccelerometerSensor",
+    "MagnetometerSensor",
+]
+
