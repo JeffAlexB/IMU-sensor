@@ -18,6 +18,7 @@ from sensors.gyro_sensor import GyroSensor
 from sensors.accelerometer_sensor import AccelerometerSensor
 from sensors.magnetometer_sensor import MagnetometerSensor
 from visualization.plot_manager import PlotManager
+from visualization.cube_animator import CubeAnimator
 
 
 def main():
@@ -69,6 +70,15 @@ def main():
     plot.show()
     # debug slider
     # plot._add_slider()
+
+    # Start the 3D cube animation
+    anim = CubeAnimator(
+        pitch=gyro_pitch_rate,
+        roll=gyro_roll_rate,
+        yaw=gyro_yaw_rate,
+        interval=10
+    )
+    anim.run()
 
 # debugg / launch confirmation
 if __name__ == "__main__":

@@ -4,5 +4,9 @@ and yaw signals and real-time updates based on sensor fusion output.
 """
 
 from .plot_manager import PlotManager
+from .cube_animator import CubeAnimator
 
-__all__ = ["PlotManager"]
+__all__ = [
+    "PlotManager",
+    "CubeAnimator"
+]
