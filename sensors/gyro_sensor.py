@@ -5,7 +5,6 @@ Simulates a gyroscope sensor by calculating the angular velocity
 
 import numpy as np
 from .base_sensor import BaseSensor
-from config import D_TIME
 
 class GyroSensor(BaseSensor):
     def __init__(self, noise_stddev):

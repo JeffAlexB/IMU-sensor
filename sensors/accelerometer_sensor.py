@@ -5,7 +5,6 @@ The sensor estimates pitch and roll by interpreting the direction of gravity.
 Noise is added to mimic real-world sensor imperfections.
 """
 
-import numpy as np
 from sensors.base_sensor import BaseSensor
 
 class AccelerometerSensor(BaseSensor):

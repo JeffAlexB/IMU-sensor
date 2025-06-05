@@ -6,7 +6,6 @@ Handles all plotting and visualization for the IMU sensor fusion simulator.
 - Adds an interactive slider to tune the alpha parameter in the complementary filter
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 from filter.complementary_filter import ComplementaryFilter

@@ -12,15 +12,11 @@ Date: 2025
 import matplotlib
 matplotlib.use('TkAgg')  # Ensures interactive mode in PyCharm or similar
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider
-
-from config import D_TIME, SIM_TIME_SECONDS, DEFAULT_ALPHA
+from config import D_TIME, DEFAULT_ALPHA
 from motion.motion_profile import MotionProfile
-from sensors.base_sensor import BaseSensor
 from sensors.gyro_sensor import GyroSensor
-from filter.complementary_filter import ComplementaryFilter
+from sensors.accelerometer_sensor import AccelerometerSensor
+from sensors.magnetometer_sensor import MagnetometerSensor
 from visualization.plot_manager import PlotManager
 
 
@@ -36,60 +32,43 @@ def main():
     gyro_roll_rate  = gyro.simulate(true_roll, time_array, D_TIME)
     gyro_yaw_rate   = gyro.simulate(true_yaw, time_array, D_TIME)
 
-    accel = BaseSensor(noise_stddev=2.0)
-    mag = BaseSensor(noise_stddev=2.0)
+    accel = AccelerometerSensor(noise_stddev=2.0)
+    mag = MagnetometerSensor(noise_stddev=2.0)
 
     # sims additional sensor input data
     accel_pitch = accel.add_noise(true_pitch)
     accel_roll = accel.add_noise(true_roll)
     mag_yaw = mag.add_noise(true_yaw)
 
-    # basic complementary filter
+    """# basic complementary filter
     filter = ComplementaryFilter(alpha=DEFAULT_ALPHA)
     fused_pitch = filter.apply(gyro_pitch_rate, accel_pitch, D_TIME)
     fused_roll  = filter.apply(gyro_roll_rate, accel_roll, D_TIME)
-    fused_yaw   = filter.apply(gyro_yaw_rate, mag_yaw, D_TIME)
+    fused_yaw   = filter.apply(gyro_yaw_rate, mag_yaw, D_TIME)"""
 
-    # setup for plotting
-    # build raw_data as input data for PlotManager since the input data is synth
+    # set up  plotting
     raw_data = {
+        "true": {
+            "pitch": true_pitch,
+            "roll": true_roll,
+            "yaw": true_yaw,
+        },
         "gyro": {
             "pitch": gyro_pitch_rate,
             "roll": gyro_roll_rate,
-            "yaw": gyro_yaw_rate
+            "yaw": gyro_yaw_rate,
         },
         "reference": {
             "pitch": accel_pitch,
             "roll": accel_roll,
-            "yaw": mag_yaw
-        },
-        "true": {
-            "pitch": true_pitch,
-            "roll": true_roll,
-            "yaw": true_yaw
+            "yaw": mag_yaw,
         }
     }
 
-    # initialize plotting
     plot = PlotManager(time_array, raw_data, D_TIME, initial_alpha=DEFAULT_ALPHA)
-    """
-    plot.add_signal('Pitch Axis', true_pitch, accel_pitch, fused_pitch, ylabel='Pitch (°)')
-    plot.add_signal('Roll Axis',  true_roll,  accel_roll,  fused_roll,  ylabel='Roll (°)')
-    plot.add_signal('Yaw Axis',   true_yaw,   mag_yaw,     fused_yaw,   ylabel='Yaw (°)', xlabel='Time (s)')
-    """
-
-    # adds 'alpha' slider widget functionality
-    def on_alpha_change(val):
-        new_alpha = val
-        filter.alpha = new_alpha
-        new_fused_pitch = filter.apply(gyro_pitch_rate, accel_pitch, D_TIME)
-        new_fused_roll  = filter.apply(gyro_roll_rate, accel_roll, D_TIME)
-        new_fused_yaw   = filter.apply(gyro_yaw_rate, mag_yaw, D_TIME)
-        plot.update_fused([new_fused_pitch, new_fused_roll, new_fused_yaw])
-
-    plot._add_slider()
     plot.show()
-
+    # debug slider
+    # plot._add_slider()
 
 # debugg / launch confirmation
 if __name__ == "__main__":
