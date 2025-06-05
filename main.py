@@ -10,7 +10,7 @@ Date: 2025
 """
 
 import matplotlib
-matplotlib.use('TkAgg')  # Ensures interactive mode in PyCharm or similar
+matplotlib.use('TkAgg')  # work-around for interactive mode in PyCharm
 
 from config import D_TIME, DEFAULT_ALPHA
 from motion.motion_profile import MotionProfile
