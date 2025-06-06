@@ -93,5 +93,6 @@ class PlotManager:
 
         self.fig.canvas.draw_idle()
 
-    def show(self):
-        plt.show()
+    def show(self, block=True):
+        plt.show(block=block)
+
